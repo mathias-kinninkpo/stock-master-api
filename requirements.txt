@@ -7,3 +7,4 @@ mysql-connector-python
 python-jose
 passlib
 bcrypt
+psycopg2-binary

@@ -17,9 +17,6 @@ create_database()
 app = FastAPI()
 
 
-
-app = FastAPI()
-
 # Middleware pour autoriser les requêtes CORS 
 app.add_middleware(
     CORSMiddleware,
@@ -39,5 +36,5 @@ app.include_router(stock_router)
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="192.168.1.88", port=8000)
 

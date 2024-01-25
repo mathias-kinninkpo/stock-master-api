@@ -11,13 +11,14 @@ class UserBase(BaseModel):
     password: str
     full_name: str
     email: str
-    role: str
+    
 
 class UserCreate(UserBase):
     pass
 
 class User(UserBase):
     user_id: int
+    role: str
 
     class Config:
         orm_mode = True
