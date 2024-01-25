@@ -6,7 +6,7 @@ from schemas.user import UserCreate, User as UserResponse
 from .auth import get_current_user, get_db, verify_password, create_access_token
 
 
-user_router = APIRouter(prefix="", tags=["Users"]) # dependencies=[Depends(get_current_user)])
+user_router = APIRouter(prefix="", tags=["Les actions sur les utilisateurs"]) # dependencies=[Depends(get_current_user)])
 
 
 """register_user - register a user
@@ -23,19 +23,23 @@ def register_user(user : UserCreate,  db: Session = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="email already registered")
     user = create_user(db, username=user.username, password=user.password, full_name=user.full_name, email=user.email)
-    print(user)
-    return {"message": "User registered successfully"}
+    if user:
+        access_token = create_access_token(data={"sub": user.email})
+        return {
+            "message": "User registered successfully",
+            "access_token": access_token, "token_type": "bearer"
+        }
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occured when creating user")
 
 
+"""login_user
 
-    """login_user
+Raises:
+    HTTPException: if user does not exist
 
-    Raises:
-        HTTPException: if user does not exist
-
-    Returns:
-        dict: message if success
-    """
+Returns:
+    dict: message if success
+"""
 
 @user_router.post("/login", response_model=dict)
 def login_user(email: str, password: str, db: Session = Depends(get_db)):

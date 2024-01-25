@@ -7,7 +7,7 @@ from .auth import get_current_user, get_db
 
 
 
-category_router = APIRouter(prefix="/categories", tags=["Categories"], dependencies=[Depends(get_current_user)])
+category_router = APIRouter(prefix="/categories", tags=["Les actions sur categories"], dependencies=[Depends(get_current_user)])
 
 @category_router.post("/", response_model=Category)
 def create(category: CategoryCreate, db: Session = Depends(get_db)):

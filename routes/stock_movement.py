@@ -7,7 +7,7 @@ from .auth import get_current_user, get_db
 
 
 
-stock_router = APIRouter(prefix="/stock_movements", tags=["Stock Movements"], dependencies=[Depends(get_current_user)])
+stock_router = APIRouter(prefix="/stock_movements", tags=["Les actions sur les mouvement de stock"], dependencies=[Depends(get_current_user)])
 
 @stock_router.post("/", response_model=StockMovementResponse)
 def create_stock(stock_movement: StockMovementCreate, db: Session = Depends(get_db)):

@@ -6,7 +6,7 @@ from schemas.produt import ProductCreate,  Product as ProductResponse
 from routes.auth import get_db
 from .auth import get_current_user
 
-product_router = APIRouter(prefix="/products", tags=["Products"], dependencies=[Depends(get_current_user)])
+product_router = APIRouter(prefix="/products", tags=["Les actions sur les produits"], dependencies=[Depends(get_current_user)])
 
 @product_router.post("/", response_model=ProductResponse)
 def create(product: ProductCreate, db: Session = Depends(get_db)):
