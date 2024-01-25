@@ -13,4 +13,5 @@ class StockMovement(Base):
     movement_date = Column(DateTime)
     notes = Column(String)
     
-    product = relationship("Product", back_populates="stock_movements")
+    # Ajoutez cette ligne pour définir la relation avec product
+    products = relationship("Product", back_populates="stock_movements")

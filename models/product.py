@@ -16,4 +16,6 @@ class Product(Base):
     quantity_max = Column(Integer)
     
     category = relationship("Category", back_populates="products")
+     # Ajoutez cette ligne pour définir la relation avec stock_movements
+    stock_movements = relationship("StockMovement", back_populates="products")
 
