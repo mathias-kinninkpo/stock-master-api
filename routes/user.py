@@ -1,8 +1,8 @@
 # routes/user.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from functions.user import create_user, get_users, get_user, update_user, delete_user
-from schemas.user import UserCreate, User as UserResponse
+from functions.user import create_user, get_users, get_user, update_user, delete_user, password_forgot, password_forgot_verify
+from schemas.user import UserCreate, LoginDataForm,  User as UserResponse
 from .auth import get_current_user, get_db, verify_password, create_access_token
 
 
@@ -42,9 +42,9 @@ Returns:
 """
 
 @user_router.post("/login", response_model=dict)
-def login_user(email: str, password: str, db: Session = Depends(get_db)):
-    user = get_user(db, email=email)
-    if user is None or not verify_password(password, user.password):
+def login_user(data : LoginDataForm, db: Session = Depends(get_db)):
+    user = get_user(db, email=data.email)
+    if user is None or not verify_password(data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
@@ -77,5 +77,30 @@ def update(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
 @user_router.delete("/users/{user_id}", response_model=UserResponse)
 def delete(user_id: int, db: Session = Depends(get_db)):
     return delete_user(db, user_id)
+
+
+
+
+@user_router.post("/password")
+async def forgot_password(email: str, db: Session = Depends(get_db)):
+    user = password_forgot(db, email)
+    _result = {'code': user.code}
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    return  {
+        "message" : "Email sent successfully",
+        "code" :  _result
+    }
+
+
+@user_router.post("/password/verify")
+async def verify_forgot_password(email: str, code: str, db: Session = Depends(get_db)):
+    user = password_forgot_verify(db, email, code)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    return   {
+        "message" : "Email sent successfully",
+        "user" :  user
+    }
 
 
