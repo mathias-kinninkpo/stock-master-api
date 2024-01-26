@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from typing import Dict
 
 class RoleEnum(str, Enum):
     admin = "admin"
@@ -23,4 +24,13 @@ class User(UserBase):
     class Config:
         orm_mode = True
         from_attributes=True
+        
+class LoginDataForm(BaseModel): 
+    email :str
+    password : str
+        
+class UserLogin(BaseModel): 
+    data :  LoginDataForm
+
+
 
