@@ -98,11 +98,10 @@ def password_forgot(db: Session, email: str):
         user.code = new_code
         db.commit()
         db.refresh(user)
-        if send_verification_code_email(email, new_code, "Le code de verification pour changer votre mot de passe est "):
+        if send_verification_code_email(email, new_code, "Veuillez utiliser le code suivant pour changer votre mot de pass"):
             return user
     return None
 
-# Fonction pour vérifier le code de vérification lors de la réinitialisation de mot de passe
 def password_forgot_verify(db: Session, email: str, code: str):
     user = db.query(User).filter(User.email == email).first()(db, email)
     if user:
