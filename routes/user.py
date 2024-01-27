@@ -55,7 +55,7 @@ def login_user(data : LoginDataForm, db: Session = Depends(get_db)):
 
 
 
-@user_router.get("/users/", response_model=list[UserResponse])
+@user_router.get("/users/", response_model=list[UserResponse], dependencies=[Depends(get_current_user)])
 def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return get_users(db, skip=skip, limit=limit)
 
@@ -70,7 +70,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return user
     
 
-@user_router.put("/users/{user_id}", response_model=UserResponse)
+@user_router.put("/users/{user_id}", response_model=UserResponse, dependencies=[Depends(get_current_user)])
 def update(user_id: int, user: UserCreate, db: Session = Depends(get_db)):
     return update_user(db, user_id, user)
 
@@ -81,7 +81,7 @@ def delete(user_id: int, db: Session = Depends(get_db)):
 
 
 
-@user_router.post("/password")
+@user_router.post("/password", dependencies=[Depends(get_current_user)])
 async def forgot_password(email: str, db: Session = Depends(get_db)):
     user = password_forgot(db, email)
     _result = {'code': user.code}
@@ -93,7 +93,7 @@ async def forgot_password(email: str, db: Session = Depends(get_db)):
     }
 
 
-@user_router.post("/password/verify")
+@user_router.post("/password/verify", dependencies=[Depends(get_current_user)])
 async def verify_forgot_password(email: str, code: str, db: Session = Depends(get_db)):
     user = password_forgot_verify(db, email, code)
     if not user:
