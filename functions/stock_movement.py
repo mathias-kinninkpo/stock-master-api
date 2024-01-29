@@ -14,7 +14,7 @@ def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
         # Mise à jour de la quantité en stock dans la table des produits
         update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
 
-    return db_stock_movement
+    return StockMovementResponse.from_orm(db_stock_movement)
 
 def get_stock_movements(db: Session, skip: int = 0, limit: int = 10):
     stock_movements = db.query(StockMovement).offset(skip).limit(limit).all()

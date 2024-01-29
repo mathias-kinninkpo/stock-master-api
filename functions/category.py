@@ -9,7 +9,7 @@ def create_category(db: Session, category: CategoryCreate):
     db.add(db_category)
     db.commit()
     db.refresh(db_category)
-    return db_category
+    return CategoryResponse.from_orm(db_category)
 
 def get_categories(db: Session, skip: int = 0, limit: int = 10):
     categories = db.query(Category).offset(skip).limit(limit).all()
