@@ -16,7 +16,7 @@ def create_user(db: Session, username: str, password: str, full_name: str, email
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return db_user
+    return UserResponse.from_orm(db_user)
 
 def get_user(db: Session, email: str):
     db_user = db.query(User).filter(User.email == email).first()
