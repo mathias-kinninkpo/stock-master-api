@@ -24,11 +24,8 @@ def register_user(user : UserCreate,  db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="email already registered")
     user = create_user(db, username=user.username, password=user.password, full_name=user.full_name, email=user.email)
     if user:
-        access_token = create_access_token(data={"sub": user.email})
-        return {
-            "message": "User registered successfully",
-            "access_token": access_token, "token_type": "bearer"
-        }
+        #access_token = create_access_token(data={"sub": user.email})
+        return user
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occured when creating user")
 
 
