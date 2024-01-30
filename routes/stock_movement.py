@@ -34,6 +34,6 @@ def update_stock(movement_id: int, stock_movement: StockMovementCreate, db: Sess
 
 
 
-@stock_router.delete("{movement_id}", response_model=StockMovementResponse)
+@stock_router.delete("/{movement_id}", response_model=StockMovementResponse)
 def delete_stock(movement_id: int, db: Session = Depends(get_db)):
     return delete_stock_movement(id=movement_id, db=db)
