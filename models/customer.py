@@ -9,4 +9,5 @@ class Customer(Base):
     email = Column(String, index=True)
     phone = Column(String)
     address = Column(String)
+    
 

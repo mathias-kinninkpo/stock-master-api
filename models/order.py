@@ -14,7 +14,7 @@ class Order(Base):
     product_id = Column(Integer, ForeignKey("products.product_id"))
     #customer_id = Column(Integer, ForeignKey("customers.customer_id"))
     quantity = Column(Integer)
-    total_amount = Column(Float)
+    total_amount = Column(Float)    
     status = Column(String)
     customer_name = Column(String)
     customer_contact = Column(String)
