@@ -14,9 +14,12 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     pass
 
+class OrderUpdate(OrderBase):
+    order_id: int
+
 class Order(OrderBase):
     order_id: int
-    order_date: datetime
+    order_date: Optional[datetime] = None
 
     class Config:
         orm_mode = True
