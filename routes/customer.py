@@ -11,7 +11,7 @@ from .auth import get_current_user
 customer_router = APIRouter(prefix="/customers", tags=["Les actions sur les clients"], dependencies=[Depends(get_current_user)])
 
 @customer_router.post("/", response_model=CustomerResponse)
-def create_customer(customer: CustomerCreate, db: Session = Depends(get_db)):
+def create(customer: CustomerCreate, db: Session = Depends(get_db)):
     return create_customer(db, customer)
 
 @customer_router.get("/", response_model=list[CustomerResponse])
