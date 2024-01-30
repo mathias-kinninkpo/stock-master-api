@@ -1,20 +1,30 @@
 # functions/stock_movement.py
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from schemas.stock_movement import StockMovementCreate, StockMovement as StockMovementResponse
 from models.stock_movement import StockMovement
 from functions.product import update_product_quantity
+from datetime import datetime
 
 def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
-    with db.begin():
-        db_stock_movement = StockMovement(**stock_movement.dict())
-        db.add(db_stock_movement)
-        db.commit()
-        db.refresh(db_stock_movement)
+    try:
+        with db.begin():
+            db_stock_movement = StockMovement(**stock_movement.dict())
+            db_stock_movement.movement_date = datetime.now()
+            db.add(db_stock_movement)
+            db.commit()
+            db.refresh(db_stock_movement)
 
-        # Mise à jour de la quantité en stock dans la table des produits
-        update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
+            # Mise à jour de la quantité en stock dans la table des produits
+            update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
 
-    return StockMovementResponse.from_orm(db_stock_movement)
+        return StockMovementResponse.from_orm(db_stock_movement)
+    except Exception as e:
+        print(f"\n\n erreur: {e} \n\n")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An error occured when creating StockMovement. Review the data format"
+        )
 
 def get_stock_movements(db: Session, skip: int = 0, limit: int = 10):
     stock_movements = db.query(StockMovement).offset(skip).limit(limit).all()
