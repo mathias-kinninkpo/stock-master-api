@@ -6,7 +6,6 @@ class StockMovementBase(BaseModel):
     product_id: int
     movement_type: str
     quantity: int
-    movement_date: datetime
     notes: str
 
 class StockMovementCreate(StockMovementBase):
@@ -14,6 +13,7 @@ class StockMovementCreate(StockMovementBase):
 
 class StockMovement(StockMovementBase):
     movement_id: int
+    movement_date: datetime
 
     class Config:
         orm_mode = True
