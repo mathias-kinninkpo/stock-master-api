@@ -51,6 +51,11 @@ def update_product_quantity(db: Session, product_id: int, quantity: int, movemen
         if movement_type.lower() == "achat":
             db_product.quantity_in_stock += quantity
         elif movement_type.lower() == "vente":
+            if quantity > db_product.quantity_in_stock:
+                raise HTTPException(
+                    status_code=status.HTTP_417_EXPECTATION_FAILED,
+                    detail=' Expected failure: insuffisant quantity in stock. You can add'
+                )
             db_product.quantity_in_stock -= quantity
 
         db.commit()
