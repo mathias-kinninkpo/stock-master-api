@@ -1,7 +1,7 @@
 # routes/stock_movement.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from functions.stock_movement import create_stock_movement, get_stock_movements, get_stock_movement
+from functions.stock_movement import create_stock_movement, get_stock_movements, get_stock_movement, update_stock_movement, delete_stock_movement
 from schemas.stock_movement import StockMovementCreate, StockMovement as  StockMovementResponse
 from .auth import get_current_user, get_db
 
@@ -27,3 +27,13 @@ def read_stock_movement(movement_id: int, db: Session = Depends(get_db)):
         )
     return _stock_movement
 
+
+@stock_router.put("/{movement_id}", response_model=StockMovementResponse)
+def update_stock(movement_id: int, stock_movement: StockMovementCreate, db: Session = Depends(get_db)):
+    return update_stock_movement(db=db, stock_movement=stock_movement, id=movement_id)
+
+
+
+@stock_router.delete("{movement_id}", response_model=StockMovementResponse)
+def delete_stock(movement_id: int, db: Session = Depends(get_db)):
+    return delete_stock_movement(id=movement_id, db=db)

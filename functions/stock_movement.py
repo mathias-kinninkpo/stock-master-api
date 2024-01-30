@@ -12,12 +12,11 @@ def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
             db_stock_movement = StockMovement(**stock_movement.dict())
             db_stock_movement.movement_date = datetime.now()
             db.add(db_stock_movement)
+        update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
         db.commit()
         db.refresh(db_stock_movement)
 
         # Mise à jour de la quantité en stock dans la table des produits
-        update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
-
         return StockMovementResponse.from_orm(db_stock_movement)
     except HTTPException as http_exception:
         if http_exception.status_code == status.HTTP_417_EXPECTATION_FAILED:
@@ -45,5 +44,31 @@ def get_stock_movement(db: Session, movement_id: int):
     if db_movement is None:
         return None
     return StockMovementResponse.from_orm(db_movement)
+
+def update_stock_movement(db: Session, id: int, stock_movement : StockMovementResponse):
+    db_mouvement = db.query(StockMovement).filter(StockMovement.movement_id == id).first()
+    if db_mouvement:
+        for key, value in stock_movement.dict().items():
+            setattr(db_mouvement, key, value)
+        db.commit()
+        db.refresh(db_mouvement)
+        return StockMovementResponse.from_orm(db_mouvement)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Stock movement not found"
+    )
+    
+
+def delete_stock_movement(db: Session, id: int):
+    db_mouvement = db.query(StockMovement).filter(StockMovement.movement_id == id).first()
+    if db_mouvement:
+        db.delete(db_mouvement)
+        db.commit()
+        return StockMovementResponse.from_orm(db_mouvement)
+    else :
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="supplier not found"
+        )
 
 
