@@ -6,6 +6,8 @@ from routes.product import product_router
 from routes.category import category_router
 from routes.customer import customer_router
 from routes.stock_movement import stock_router
+from routes.supplier import supplier_router
+from routes.order import order_router
 
 
 def create_database():
@@ -31,6 +33,8 @@ app.include_router(product_router)
 app.include_router(category_router)
 app.include_router(customer_router)
 app.include_router(stock_router)
+app.include_router(supplier_router)
+app.include_router(order_router)
 
 
 if __name__ == "__main__":
