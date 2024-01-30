@@ -26,10 +26,8 @@ def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
             detail="An error occured when creating StockMovement. Review the data format"
         )
 
-def get_stock_movements(db: Session, skip: int = 0, limit: int = 10):
-    stock_movements = db.query(StockMovement).offset(skip).limit(limit).all()
-    if not stock_movements:
-        return None
+def get_stock_movements(db: Session):
+    stock_movements = db.query(StockMovement).all()
     return [StockMovementResponse.from_orm(movement) for movement in stock_movements]
 
 def get_stock_movement(db: Session, movement_id: int):

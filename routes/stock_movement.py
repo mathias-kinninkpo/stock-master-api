@@ -14,8 +14,8 @@ def create_stock(stock_movement: StockMovementCreate, db: Session = Depends(get_
     return create_stock_movement(db, stock_movement)
 
 @stock_router.get("/", response_model=list[StockMovementResponse])
-def read_stock_movements(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return get_stock_movements(db, skip=skip, limit=limit)
+def read_stock_movements( db: Session = Depends(get_db)):
+    return get_stock_movements(db)
 
 @stock_router.get("/{movement_id}", response_model=StockMovementResponse)
 def read_stock_movement(movement_id: int, db: Session = Depends(get_db)):
