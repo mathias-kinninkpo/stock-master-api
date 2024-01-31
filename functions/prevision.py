@@ -13,7 +13,7 @@ def prevision(db: Session):
                     "product_id" : product.product_id,
                     "product_name": product.product_name,
                     "status": -1,
-                    "message": f"La quantité du produit {product.product_name} en stock est en dessous du  seuil minimal. Veuillez enregistrer un achat"
+                    "message": f"La quantité du produit {product.product_name} en stock est en dessous ou égale au  seuil minimal. Veuillez enregistrer un achat"
                 }
             )
         if product.quantity_in_stock >= product.quantity_max :
@@ -22,7 +22,7 @@ def prevision(db: Session):
                     "product_id" : product.product_id,
                     "product_name": product.product_name,
                     "status": 1,
-                    "message": f"La quantité du produit {product.product_name} en stock est en dessus du seuil maximal. Arrêtez les achats pour éviter la mevente"
+                    "message": f"La quantité du produit {product.product_name} en stock est  au-dessus ou égale au seuil maximal. Arrêtez les achats pour éviter la mevente"
                 }
             )
     return prevs

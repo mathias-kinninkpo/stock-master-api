@@ -25,8 +25,14 @@ def get_user(db: Session, email: str):
         return None
     return UserResponse.from_orm(db_user)
 
-def get_users(db: Session, skip: int = 0, limit: int = 10):
-    users = db.query(User).offset(skip).limit(limit).all()
+def get_user_by_id(db: Session, id: int):
+    db_user = db.query(User).filter(User.user_id == id).first()
+    if db_user is None : 
+        return None
+    return UserResponse.from_orm(db_user)
+
+def get_users(db: Session):
+    users = db.query(User).all()
     return [UserResponse.from_orm(user) for user in users]
 
 
@@ -102,7 +108,12 @@ def password_forgot(db: Session, passwords: PasswordFormat):
             """)
         is_password_valid = verify_password(passwords.old_password, user.password)
         print(is_password_valid)
-        if is_password_valid:
+        if is_password_valid != True:
+            raise HTTPException (
+            status_code=status.HTTP_406_NOT_ACCEPTABLE, 
+            detail="Incorrect old password"
+            )
+        else:
             user.password = get_password_hash(password=passwords.new_password)
             print(f"""
                 changé
@@ -120,15 +131,12 @@ def password_forgot(db: Session, passwords: PasswordFormat):
             return {
                 "message" : "Password modified successfully"
             }
-        raise HTTPException (
-            status_code=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, 
-            detail="Incorrect old password"
-        )
+    else:
         
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, 
-        detail="User not found"
-    )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="User not found"
+        )
 
 
 
