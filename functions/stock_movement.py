@@ -8,11 +8,10 @@ from datetime import datetime
 
 def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
     try:
-        with db.begin():
-            db_stock_movement = StockMovement(**stock_movement.dict())
-            update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
-            db_stock_movement.movement_date = datetime.now()
-            db.add(db_stock_movement)
+        db_stock_movement = StockMovement(**stock_movement.dict())
+        db_stock_movement.movement_date = datetime.now()
+        update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
+        db.add(db_stock_movement)
         db.commit()
         db.refresh(db_stock_movement)
 
@@ -20,7 +19,6 @@ def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
         return StockMovementResponse.from_orm(db_stock_movement)
     except HTTPException as http_exception:
         if http_exception.status_code == status.HTTP_417_EXPECTATION_FAILED:
-            # Handle specific HTTPException with status code 417
             print("\n\n Expected failure: Insufficient quantity in stock \n\n")
             raise http_exception
         else:
@@ -32,7 +30,7 @@ def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
         print(f"\n\n Error: {e} \n\n")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="An error occurred when creating StockMovement. Review the data format"
+            detail=f"An error occurred when creating StockMovement. Review the data format {e}"
         )
 
 def get_stock_movements(db: Session):

@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from routes.auth import get_password_hash
 from models.user import User
 from fastapi import HTTPException, status
-from schemas.user import UserCreate, User as UserResponse
+from schemas.user import UserCreate, User as UserResponse, PasswordFormat
+from routes.auth import verify_password, get_password_hash
 
 
 def create_user(db: Session, username: str, password: str, full_name: str, email: str):
@@ -91,16 +92,45 @@ def send_verification_code_email(email: str, code: str, message: str):
     
 
 
-def password_forgot(db: Session, email: str):
-    user = db.query(User).filter(User.email == email).first()
+def password_forgot(db: Session, passwords: PasswordFormat):
+    user = db.query(User).filter(User.user_id == passwords.user_id).first()
     if user:
-        new_code = generate_verification_code()
-        user.code = new_code
-        db.commit()
-        db.refresh(user)
-        if send_verification_code_email(email, new_code, "Veuillez utiliser le code suivant pour changer votre mot de pass"):
-            return user
-    return None
+        print(f"""
+                encien
+
+                {user.password}
+            """)
+        is_password_valid = verify_password(passwords.old_password, user.password)
+        print(is_password_valid)
+        if is_password_valid:
+            user.password = get_password_hash(password=passwords.new_password)
+            print(f"""
+                changé
+
+                {get_password_hash(password=passwords.new_password)}
+            """)
+            db.commit()
+            db.refresh(user)
+            user = db.query(User).filter(User.user_id == passwords.user_id).first()
+            print(f"""
+                nouveau
+
+                {user.password}
+            """)
+            return {
+                "message" : "Password modified successfully"
+            }
+        raise HTTPException (
+            status_code=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION, 
+            detail="Incorrect old password"
+        )
+        
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, 
+        detail="User not found"
+    )
+
+
 
 def password_forgot_verify(db: Session, email: str, code: str):
     user = db.query(User).filter(User.email == email).first()(db, email)

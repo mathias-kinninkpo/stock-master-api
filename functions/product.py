@@ -56,7 +56,8 @@ def update_product_quantity(db: Session, product_id: int, quantity: int, movemen
                     status_code=status.HTTP_417_EXPECTATION_FAILED,
                     detail=' Expected failure: insuffisant quantity in stock. You can add'
                 )
-            db_product.quantity_in_stock -= quantity
+            else:
+                db_product.quantity_in_stock -= quantity
 
         db.commit()
         db.refresh(db_product)
