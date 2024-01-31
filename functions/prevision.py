@@ -13,7 +13,7 @@ def prevision(db: Session):
                     "product_id" : product.product_id,
                     "product_name": product.product_name,
                     "status": -1,
-                    "message": f"La quantité du produit {product.product_name} en stock est en dessous ou égale au  seuil minimal. Veuillez enregistrer un achat"
+                    "message": f"La quantité du produit {product.product_name}  en stock est en dessous ou égale au  seuil minimal. Veuillez enregistrer un achat"
                 }
             )
         if product.quantity_in_stock >= product.quantity_max :
