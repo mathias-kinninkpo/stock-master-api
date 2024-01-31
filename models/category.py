@@ -8,5 +8,5 @@ class Category(Base):
     category_id = Column(Integer, primary_key=True, index=True)
     category_name = Column(String, index=True)
     
-    products = relationship("Product", back_populates="category")
+    products = relationship("Product", back_populates="category", cascade="all, delete-orphan")
 
