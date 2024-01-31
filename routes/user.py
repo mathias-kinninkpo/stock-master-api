@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from functions.user import create_user, get_users, get_user, update_user, delete_user, password_forgot, password_forgot_verify
-from schemas.user import UserCreate, LoginDataForm,  User as UserResponse
+from schemas.user import UserCreate, LoginDataForm,  User as UserResponse, PasswordFormat
 from .auth import get_current_user, get_db, verify_password, create_access_token
 
 
@@ -82,16 +82,10 @@ def delete(user_id: int, db: Session = Depends(get_db)):
 
 
 
-@user_router.post("/password", dependencies=[Depends(get_current_user)])
-async def forgot_password(email: str, db: Session = Depends(get_db)):
-    user = password_forgot(db, email)
-    _result = {'code': user.code}
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    return  {
-        "message" : "Email sent successfully",
-        "code" :  _result
-    }
+@user_router.post("/password", response_model=dict, dependencies=[Depends(get_current_user)])
+async def forgot_password(passwords:  PasswordFormat, db: Session = Depends(get_db)):
+    return password_forgot(db=db, passwords=passwords)
+
 
 
 @user_router.post("/password/verify", dependencies=[Depends(get_current_user)])
