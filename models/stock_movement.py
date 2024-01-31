@@ -14,4 +14,4 @@ class StockMovement(Base):
     notes = Column(String)
     
     # Ajoutez cette ligne pour définir la relation avec product
-    products = relationship("Product", back_populates="stock_movements", cascade="all, delete-orphan")
+    products = relationship("Product", back_populates="stock_movements")

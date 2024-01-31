@@ -19,5 +19,5 @@ class Order(Base):
     customer_name = Column(String)
     customer_contact = Column(String)
 
-    products = relationship("Product", back_populates="orders", cascade="all, delete-orphan")
+    products = relationship("Product", back_populates="orders")
     #customers = relationship("Customer", back_populates="orders")
