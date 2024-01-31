@@ -10,9 +10,9 @@ def create_stock_movement(db: Session, stock_movement: StockMovementCreate):
     try:
         with db.begin():
             db_stock_movement = StockMovement(**stock_movement.dict())
+            update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
             db_stock_movement.movement_date = datetime.now()
             db.add(db_stock_movement)
-        update_product_quantity(db, stock_movement.product_id, stock_movement.quantity, stock_movement.movement_type)
         db.commit()
         db.refresh(db_stock_movement)
 
