@@ -1,7 +1,7 @@
 # routes/user.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from functions.user import create_user, get_users, get_user, update_user, delete_user, password_forgot, password_forgot_verify
+from functions.user import create_user, get_users, get_user, get_user_by_id, update_user, delete_user, password_forgot, password_forgot_verify
 from schemas.user import UserCreate, LoginDataForm,  User as UserResponse, PasswordFormat
 from .auth import get_current_user, get_db, verify_password, create_access_token
 
@@ -57,12 +57,12 @@ def login_user(data : LoginDataForm, db: Session = Depends(get_db)):
 
 
 @user_router.get("/users/", response_model=list[UserResponse], dependencies=[Depends(get_current_user)])
-def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    return get_users(db, skip=skip, limit=limit)
+def read_users(db: Session = Depends(get_db)):
+    return get_users(db)
 
 @user_router.get("/users/{user_id}", response_model=UserResponse)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    user = get_user(db, user_id)
+    user = get_user_by_id(db, user_id)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
