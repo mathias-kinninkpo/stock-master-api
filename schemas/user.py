@@ -31,6 +31,10 @@ class LoginDataForm(BaseModel):
         
 class UserLogin(BaseModel): 
     data :  LoginDataForm
-
+    
+class PasswordFormat(BaseModel):
+    user_id: int
+    new_password: str
+    old_password: str
 
 
